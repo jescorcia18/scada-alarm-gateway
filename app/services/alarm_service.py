@@ -1,6 +1,7 @@
 from datetime import datetime
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from app.models.alarm import Alarm
 
 from app.repository.alarm_repository import (
     get_alarms_query,
@@ -23,14 +24,10 @@ def filter_alarms(
     # Fechas
     try:
         if start_date:
-            query = query.filter(
-                get_alarms_query(db).column_descriptions[0]['entity'].timestamp >= datetime.fromisoformat(start_date)
-            )
+            query = query.filter(Alarm.timestamp >= start_date)
 
         if end_date:
-            query = query.filter(
-                get_alarms_query(db).column_descriptions[0]['entity'].timestamp <= datetime.fromisoformat(end_date)
-            )
+            query = query.filter(Alarm.timestamp <= end_date)
 
     except ValueError:
         raise HTTPException(
